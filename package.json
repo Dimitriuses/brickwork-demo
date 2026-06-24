@@ -1,0 +1,10 @@
+{
+  "name": "brickwork-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Demo site showcasing the brickwork-ssg static-site engine.",
+  "scripts": {
+    "build": "node engine/cli.js build",
+    "admin": "node engine/cli.js admin"
+  }
+}
