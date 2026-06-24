@@ -1,7 +1,7 @@
 {
   "page": "index", "title": "Home", "header_theme": "dark", "layout": "_layout",
   "components": [
-    { "name": "hero", "vars": { "HERO_TITLE": "Brickwork & Co.", "HERO_SUBTITLE": "Quality building materials, built into one tidy static site", "HERO_BG_IMAGE": "assets/images/hero.png", "HERO_HEIGHT": "70vh", "HERO_OVERLAY": "0.5" } },
+    { "name": "hero", "vars": { "HERO_TITLE": "Brickwork & Co.", "HERO_SUBTITLE": "Quality building materials, built into one tidy static site", "HERO_BG_IMAGE": "assets/images/hero.jpg", "HERO_HEIGHT": "70vh", "HERO_OVERLAY": "0.5" } },
     { "name": "products", "vars": { "PRODUCTS_TITLE": "Featured", "PRODUCTS_SUBTITLE": "A few of our best sellers", "PRODUCTS_PER_PAGE": 0 } },
     { "name": "faq", "vars": { "FAQ_TITLE": "Questions", "FAQ_SUBTITLE": "What people ask", "FAQ_ITEMS": [ { "question": "What is this?", "answer": "A demo of <strong>brickwork-ssg</strong>, a component-based static-site generator." }, { "question": "Can I order?", "answer": "No — it is a demo storefront. Prices are illustrative." } ], "FAQ_CTA_TEXT": "Want to know more?", "FAQ_CTA_LINK": "contact.html", "FAQ_CTA_BUTTON": "Contact us" } }
   ]
