@@ -1,2 +1,25 @@
-body{background:#011826;color:#e9eef2;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-a{color:#7aa7ff}
+/* Demo theme: a warm "terracotta" reskin of the engine's default navy palette,
+   to show that a site changes its whole look by overriding --bw-* variables.
+   Every value below overrides an engine default (see brickwork-ssg README). */
+:root {
+  --bw-accent: #d97706;        /* amber instead of the default blue */
+  --bw-accent-hover: #b45309;
+  --bw-accent-2: #0ea5e9;      /* complementary teal */
+  --bw-surface: #241a12;       /* warm card background */
+  --bw-surface-alt: #2e2217;
+  --bw-surface-deep: #160f08;
+  --bw-border: #d8cabb;
+  --bw-border-dark: #3a2c1c;
+  --bw-image-bg: #f5efe6;
+  --bw-text: #efe6da;
+  --bw-text-muted: #b9a890;
+  --bw-text-faint: #7a6f5e;
+}
+
+body {
+  background: #1b130b;
+  color: #efe6da;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+a { color: var(--bw-accent, #d97706); }
