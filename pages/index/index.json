@@ -3,6 +3,7 @@
   "components": [
     { "name": "hero", "vars": { "HERO_TITLE": "Brickwork & Co.", "HERO_SUBTITLE": "Quality building materials, built into one tidy static site", "HERO_BG_IMAGE": "assets/images/hero.jpg", "HERO_HEIGHT": "70vh", "HERO_OVERLAY": "0.5" } },
     { "name": "products", "vars": { "PRODUCTS_TITLE": "Featured", "PRODUCTS_SUBTITLE": "A few of our best sellers", "PRODUCTS_PER_PAGE": 0 } },
+    { "name": "testimonials", "vars": { "TESTIMONIALS_TITLE": "What builders say", "TESTIMONIALS_SUBTITLE": "A site-authored component, resolved via components/registry.json", "QUOTES": [ { "quote": "Tidy materials, tidy site. The build is fast and the pages are dead simple to edit.", "author": "Sam R.", "role": "Bricklayer" }, { "quote": "We reskinned the whole storefront by overriding a handful of CSS variables.", "author": "Priya N.", "role": "Site owner" }, { "quote": "Added our own component and a generator without touching the engine.", "author": "Marco L.", "role": "Developer" } ] } },
     { "name": "faq", "vars": { "FAQ_TITLE": "Questions", "FAQ_SUBTITLE": "What people ask", "FAQ_ITEMS": [ { "question": "What is this?", "answer": "A demo of <strong>brickwork-ssg</strong>, a component-based static-site generator." }, { "question": "Can I order?", "answer": "No — it is a demo storefront. Prices are illustrative." } ], "FAQ_CTA_TEXT": "Want to know more?", "FAQ_CTA_LINK": "contact.html", "FAQ_CTA_BUTTON": "Contact us" } }
   ]
 }

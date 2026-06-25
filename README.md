@@ -21,6 +21,26 @@ Cloned without submodules? Fetch the engine:
 git submodule update --init --recursive
 ```
 
+## What it showcases
+
+Beyond the built-in components and product generator, this site exercises the
+engine's **v0.2 site-extension** surface without modifying the engine:
+
+- **A site component** — `components/blocks/testimonials/`, mapped by
+  `components/registry.json` and rendered on the home page. It declares its own
+  sub-component (`testimonials.json` → `testimonial`) and uses the build-script
+  helpers (`raw`, `escapeHtml`).
+- **A site generator** — `generators/guides.build.js`, which emits a static
+  "buying guide" page per entry via the `generate(ctx)` contract.
+- **Site tests** — `test/demo.test.js`, run with `npm test` (= `ssg test`) after
+  a build, on top of the engine's standard checks.
+- **Theming** — `assets/css/global.css` reskins the storefront by overriding the
+  engine's `--bw-*` CSS variables (no component edits).
+
+```bash
+npm test                 # build, then run standard checks + test/*.test.js
+```
+
 ## Admin panel (optional)
 
 ```bash

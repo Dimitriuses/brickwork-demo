@@ -5,6 +5,7 @@
   "description": "Demo site showcasing the brickwork-ssg static-site engine.",
   "scripts": {
     "build": "node engine/cli.js build",
+    "test": "node engine/cli.js test",
     "admin": "node engine/cli.js admin"
   }
 }

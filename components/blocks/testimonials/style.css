@@ -1,0 +1,27 @@
+/* Site component styles. Uses the engine's --bw-* theme variables so the
+   block follows the demo's terracotta reskin (assets/css/global.css). */
+.testimonials {
+  background: var(--bw-surface-deep, #160f08);
+}
+.testimonials .testimonial {
+  margin: 0;
+  padding: 1.4rem 1.5rem;
+  background: var(--bw-surface, #241a12);
+  border: 1px solid var(--bw-border-dark, #3a2c1c);
+  border-left: 4px solid var(--bw-accent, #d97706);
+  border-radius: 8px;
+}
+.testimonials .testimonial-quote {
+  color: var(--bw-text, #efe6da);
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+.testimonials .testimonial-author {
+  color: var(--bw-accent, #d97706);
+  font-weight: 600;
+}
+.testimonials .testimonial-role {
+  color: var(--bw-text-muted, #b9a890);
+  font-weight: 400;
+  font-size: 0.875rem;
+}
