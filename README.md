@@ -4,6 +4,10 @@ A demo storefront showcasing the [**brickwork-ssg**](https://github.com/Dimitriu
 static-site engine. The engine is embedded here as a **git submodule** at `engine/`;
 this repo holds only the site's content (`config.json`, `pages/`, `assets/`, `shared/`).
 
+> **Provenance:** this repository was extracted from a larger private project and
+> later separated alongside the independent `brickwork-ssg` engine. The current
+> commit history does not reflect the full development timeline.
+
 ## Build
 
 ```bash
