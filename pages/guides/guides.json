@@ -1,0 +1,8 @@
+{
+  "generatorOptions": {
+    "generator": "guides",
+    "pageName": "guide-{slug}"
+  },
+  "layout": "_layout",
+  "header_theme": "dark"
+}
