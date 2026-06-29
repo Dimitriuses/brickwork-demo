@@ -12,6 +12,6 @@ module.exports = ({ read, check }) => {
   check('testimonials CSS linked', /assets\/css\/testimonials\.css/.test(home));
   // The site generator emitted its pages (Phase C).
   check('guides generator produced a page', read('guide-choosing-the-right-brick.html').length > 0);
-  // The bundled engine generator still works alongside the site one.
+  // The generator-free products grid (data_model + carousel) works alongside the site generator.
   check('shop lists products', /product-card/.test(read('shop.html')));
 };
