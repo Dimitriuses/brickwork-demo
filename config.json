@@ -2,5 +2,6 @@
   "site": { "name": "Brickwork & Co.", "logo": "assets/images/logo.png", "description": "A demo storefront built with the brickwork-ssg engine.", "url": "https://example.com", "contact": { "email": "hello@example.com", "phone": "+1 (555) 010-2030" } },
   "social": { "github": "https://github.com/Dimitriuses/brickwork-ssg", "telegram": "https://t.me/", "instagram": "https://instagram.com/" },
   "nav": [ { "label": "Home", "url": "index.html" }, { "label": "Shop", "url": "shop.html" }, { "label": "About", "url": "about.html" }, { "label": "Contact", "url": "contact.html" } ],
-  "test": { "engineChecks": true }
+  "test": { "engineChecks": true },
+  "log": { "level": "normal", "color": "auto", "file": { "format": "jsonl", "retention": { "maxFiles": 10 } } }
 }

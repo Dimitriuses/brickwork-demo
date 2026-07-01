@@ -1,6 +1,9 @@
 # Build output (regenerated)
 build/
 
+# Log output (per-run file sink; see engine docs/terminal-ux-plan.md)
+log/
+
 # Node modules (site + engine submodule)
 node_modules/
 engine/node_modules/
