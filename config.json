@@ -3,5 +3,6 @@
   "social": { "github": "https://github.com/Dimitriuses/brickwork-ssg", "telegram": "https://t.me/", "instagram": "https://instagram.com/" },
   "nav": [ { "label": "Home", "url": "index.html" }, { "label": "Shop", "url": "shop.html" }, { "label": "About", "url": "about.html" }, { "label": "Contact", "url": "contact.html" } ],
   "test": { "engineChecks": true },
-  "log": { "level": "normal", "color": "auto", "file": { "format": "jsonl", "retention": { "maxFiles": 10 } } }
+  "log": { "level": "normal", "color": "auto", "file": { "format": "jsonl", "retention": { "maxFiles": 10 } } },
+  "dirs": { "pages": "src/pages", "components": "src/components", "generators": "src/generators", "assets": "shared/assets" }
 }
