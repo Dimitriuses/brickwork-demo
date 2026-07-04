@@ -1,1 +1,11 @@
-{ "page": "contact", "title": "Contact", "header_theme": "dark", "layout": "_layout", "components": [] }
+{
+  "page": "contact",
+  "title": "Contact",
+  "layout": {
+    "name": "_layout",
+    "vars": {
+      "header_theme": "dark"
+    }
+  },
+  "components": []
+}
