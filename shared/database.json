@@ -7,7 +7,14 @@
       "enabled": true,
       "data_model": {
         "images": { "match": "*.{jpg,jpeg,png,gif,webp}", "type": "paths",  "copy": true,  "required": false },
-        "data":   { "match": "product.json",               "type": "object", "copy": false, "required": true }
+        "data":   { "match": "product.json",               "type": "object", "copy": false, "required": true,
+          "schema": {
+            "name":        { "type": "string", "label": "Name", "required": true },
+            "price":       { "type": "string", "label": "Price" },
+            "description": { "type": "string", "label": "Short description" },
+            "details":     { "type": "text",   "label": "Details" }
+          }
+        }
       }
     }
   ]

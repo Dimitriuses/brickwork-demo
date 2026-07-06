@@ -1,8 +1,67 @@
 {
-  "site": { "name": "Brickwork & Co.", "logo": "assets/images/logo.png", "description": "A demo storefront built with the brickwork-ssg engine.", "url": "https://example.com", "contact": { "email": "hello@example.com", "phone": "+1 (555) 010-2030" } },
-  "social": { "github": "https://github.com/Dimitriuses/brickwork-ssg", "telegram": "https://t.me/", "instagram": "https://instagram.com/" },
-  "nav": [ { "label": "Home", "url": "index.html" }, { "label": "Shop", "url": "shop.html" }, { "label": "About", "url": "about.html" }, { "label": "Contact", "url": "contact.html" } ],
-  "test": { "engineChecks": true },
-  "log": { "level": "normal", "color": "auto", "file": { "format": "jsonl", "retention": { "maxFiles": 10 } } },
-  "dirs": { "pages": "src/pages", "components": "src/components", "generators": "src/generators", "assets": "shared/assets", "output": "build", "test": "test", "log": "log" }
+  "site": {
+    "name": "Brickwork & Co.",
+    "logo": "assets/images/logo.png",
+    "description": "A demo storefront built with the brickwork-ssg engine.",
+    "url": "https://example.com",
+    "contact": {
+      "email": "hello@example.com",
+      "phone": "+1 (555) 010-2030"
+    }
+  },
+  "social": {
+    "github": "https://github.com/Dimitriuses/brickwork-ssg",
+    "telegram": "https://t.me/",
+    "instagram": "https://instagram.com/"
+  },
+  "nav": [
+    {
+      "label": "Home",
+      "url": "index.html"
+    },
+    {
+      "label": "Shop",
+      "url": "shop.html"
+    },
+    {
+      "label": "About",
+      "url": "about.html"
+    },
+    {
+      "label": "Contact",
+      "url": "contact.html"
+    }
+  ],
+  "test": {
+    "engineChecks": true
+  },
+  "log": {
+    "level": "normal",
+    "color": "auto",
+    "file": {
+      "format": "jsonl",
+      "retention": {
+        "maxFiles": 10
+      }
+    }
+  },
+  "dirs": {
+    "pages": "src/pages",
+    "components": "src/components",
+    "generators": "src/generators",
+    "assets": "shared/assets",
+    "output": "build",
+    "test": "test",
+    "log": "log",
+    "admin": "shared/admin"
+  },
+  "admin": {
+    "localhost_only": true,
+    "port": 3000,
+    "collections": {
+      "products": {
+        "images": { "max_count": 8, "max_size_mb": 5, "accept": ["jpg", "jpeg", "png", "webp"] }
+      }
+    }
+  }
 }

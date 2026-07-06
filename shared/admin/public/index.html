@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <style>
+    /* Self-contained — no CDN, so an adopted admin works offline. */
+    :root {
+      --bg: #f4f5f7; --panel: #ffffff; --ink: #1f2430; --muted: #6b7280; --line: #e5e7eb;
+      --accent: #4f46e5; --accent-ink: #ffffff; --danger: #dc2626; --ok: #16a34a; --radius: 8px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#14161c; --panel:#1c1f27; --ink:#e6e8ee; --muted:#9aa1ad; --line:#2b2f3a; --accent:#6366f1; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: var(--ink); background: var(--bg); }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; flex: none; background: var(--panel); border-right: 1px solid var(--line); padding: 20px 14px; display: flex; flex-direction: column; }
+    .sidebar h1 { font-size: 16px; margin: 0 6px 18px; display: flex; align-items: center; gap: 8px; }
+    .sidebar h1 .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+    nav#collections { display: flex; flex-direction: column; gap: 2px; }
+    nav#collections a { padding: 8px 10px; border-radius: 6px; color: var(--muted); text-decoration: none; font-weight: 500; cursor: pointer; }
+    nav#collections a:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--ink); }
+    nav#collections a.active { background: var(--accent); color: var(--accent-ink); }
+    .sidebar .foot { margin-top: auto; color: var(--muted); font-size: 12px; padding: 8px 6px 0; border-top: 1px solid var(--line); word-break: break-all; }
+    main { flex: 1; min-width: 0; padding: 22px 26px; }
+    .topbar { display: flex; align-items: baseline; gap: 12px; margin-bottom: 18px; }
+    .topbar h2 { margin: 0; font-size: 20px; }
+    .muted { color: var(--muted); }
+    .small { font-size: 12px; }
+    .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .toolbar .spacer { flex: 1; }
+    .btn { font: inherit; padding: 7px 12px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 6px; cursor: pointer; }
+    .btn:hover { border-color: var(--accent); }
+    .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+    .btn.danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, var(--line)); }
+    .btn.danger:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+    .btn.small { padding: 4px 9px; font-size: 12px; }
+    table.items { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    table.items th, table.items td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+    table.items th { background: color-mix(in srgb, var(--ink) 4%, transparent); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    table.items tr:last-child td { border-bottom: none; }
+    table.items td.actions { text-align: right; white-space: nowrap; }
+    table.items td.actions .btn { margin-left: 6px; }
+    .empty { padding: 40px; text-align: center; color: var(--muted); background: var(--panel); border: 1px dashed var(--line); border-radius: var(--radius); }
+    .part { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
+    .part > h4 { margin: 0 0 12px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+    .badge { font-size: 11px; font-weight: 600; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; text-transform: uppercase; letter-spacing: .03em; }
+    .field { margin-bottom: 12px; max-width: 640px; }
+    .field label { display: block; font-weight: 600; margin-bottom: 4px; }
+    .field .req { color: var(--danger); }
+    .field input[type=text], .field input[type=number], .field input[type=datetime-local], .field select, .obj-form textarea, #newId {
+      width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font: inherit;
+    }
+    .field input[type=checkbox] { width: 18px; height: 18px; }
+    .obj-form textarea.json { width: 100%; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+    .row { display: flex; gap: 8px; }
+    .file-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
+    .file-cell { width: 130px; border: 1px solid var(--line); border-radius: 6px; padding: 8px; text-align: center; position: relative; background: var(--bg); }
+    .file-cell img { width: 100%; height: 96px; object-fit: cover; border-radius: 4px; display: block; }
+    .file-cell .file-icon { height: 96px; display: flex; align-items: center; justify-content: center; font-size: 11px; word-break: break-all; padding: 4px; }
+    .file-cell .btn { position: absolute; top: 4px; right: 4px; padding: 1px 7px; }
+    .file-cell .file-name { margin-top: 6px; word-break: break-all; }
+    .upload { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    #toast { position: fixed; right: 20px; bottom: 20px; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px; opacity: 0; transform: translateY(8px); transition: .2s; pointer-events: none; max-width: 380px; }
+    #toast.show { opacity: 1; transform: none; }
+    #toast.err { background: var(--danger); color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h1><span class="dot"></span> Admin Panel</h1>
+      <nav id="collections"></nav>
+      <div class="foot" id="siteFoot"></div>
+    </aside>
+    <main>
+      <div class="topbar">
+        <h2 id="collTitle">—</h2>
+        <span class="muted" id="collMeta"></span>
+      </div>
+
+      <section id="listView">
+        <div class="toolbar">
+          <button class="btn primary" id="newBtn">+ New</button>
+          <button class="btn" id="refreshBtn">Refresh</button>
+          <span class="spacer"></span>
+          <span class="muted small" id="itemCount"></span>
+        </div>
+        <div id="itemsWrap"></div>
+      </section>
+
+      <section id="editView" hidden>
+        <div class="toolbar">
+          <button class="btn" id="backBtn">← Back</button>
+          <h3 id="editTitle" style="margin:0;font-size:16px;"></h3>
+          <span class="spacer"></span>
+          <button class="btn danger" id="deleteBtn">Delete</button>
+          <button class="btn primary" id="saveBtn">Save</button>
+        </div>
+        <div id="editBody"></div>
+      </section>
+    </main>
+  </div>
+  <div id="toast"></div>
+
+  <script src="fieldTypes.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
