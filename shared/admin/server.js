@@ -11,6 +11,7 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 const model = require('./lib/model');
+const security = require('./lib/security'); // pure Host/Origin predicates (DNS-rebinding + CSRF)
 const fieldTypes = require('./public/fieldTypes'); // lives in public/ so it is also served to the browser
 
 const app = express();
@@ -80,7 +81,6 @@ function publicPartConfig(collName, partName) {
   if (cfg.max_count != null) out.max_count = cfg.max_count;
   if (cfg.max_size_mb != null) out.max_size_mb = cfg.max_size_mb;
   if (Array.isArray(cfg.accept)) out.accept = cfg.accept;
-  if (cfg.orderable != null) out.orderable = cfg.orderable;
   return out;
 }
 function fileEntry(c, id, filename) { return { name: filename, url: `/files/${encodeURIComponent(c.name)}/${encodeURIComponent(id)}/${encodeURIComponent(filename)}` }; }
@@ -117,15 +117,32 @@ function objectPartErrors(part, obj) { return part.schema ? fieldTypes.validateO
 })();
 
 // --- Middleware --------------------------------------------------------------
+// Browser-mediated defense FIRST (the admin is unauthenticated + edits real source data): reject a
+// foreign Host header when bound localhost-only (DNS rebinding), and refuse a cross-site Origin on
+// any state-changing request (CSRF). See lib/security.js.
+app.use((req, res, next) => {
+  if (LOCALHOST_ONLY && !security.hostAllowed(req.headers.host)) {
+    return res.status(403).json({ error: 'Forbidden: unexpected Host header (admin is bound to localhost)' });
+  }
+  if (security.crossOriginBlocked(req.method, req.headers.origin, req.headers.host)) {
+    return res.status(403).json({ error: 'Forbidden: cross-origin request refused' });
+  }
+  next();
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve an item's source files (for image previews etc.) straight from the collection source.
+// Serve an item's source files (for image previews etc.) straight from the collection source. Scoped
+// to a servable (non-`object`) part, so the data file (e.g. product.json) is never served here. The
+// filename may be a nested relative path (parts can match nested files) — validated segment-by-segment.
 app.get('/files/:collection/:id/:filename', (req, res) => {
   try {
     const c = getCollection(req.params.collection);
-    const filePath = resolveWithin(itemDirOf(c, req.params.id), safeSeg(req.params.filename, 'filename'));
+    const filename = security.safeRelPath(req.params.filename);
+    if (!filename) throw badRequest('Invalid filename');
+    if (!model.filePart(model.modelParts(c), filename)) return res.status(404).end();
+    const filePath = resolveWithin(itemDirOf(c, req.params.id), ...filename.split('/'));
     if (!fs.existsSync(filePath)) return res.status(404).end();
     res.sendFile(filePath);
   } catch (e) { res.status(e.status || 400).end(); }
@@ -186,7 +203,11 @@ app.post('/api/collections/:collection/items', (req, res) => {
         const errs = objectPartErrors(p, seed[p.name]);
         if (errs.length) { fs.rmSync(itemDir, { recursive: true, force: true }); return res.status(400).json({ error: `Validation failed for "${p.name}"`, errors: errs }); }
         const fn = model.objectFileName(itemDir, p);
-        if (fn) fs.writeFileSync(path.join(itemDir, fn), JSON.stringify(seed[p.name], null, 2));
+        if (fn) {
+          const target = path.join(itemDir, fn);
+          fs.mkdirSync(path.dirname(target), { recursive: true });
+          fs.writeFileSync(target, JSON.stringify(seed[p.name], null, 2));
+        }
       }
     }
     res.json({ success: true, id });
@@ -205,7 +226,9 @@ app.put('/api/collections/:collection/items/:id/parts/:part', (req, res) => {
     if (errs.length) return res.status(400).json({ error: 'Validation failed', errors: errs });
     const fn = model.objectFileName(itemDir, part);
     if (!fn) return res.status(400).json({ error: `Cannot determine a filename for object part "${part.name}" (match "${part.match}" is a glob)` });
-    fs.writeFileSync(path.join(itemDir, fn), JSON.stringify(req.body || {}, null, 2));
+    const target = path.join(itemDir, fn);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.writeFileSync(target, JSON.stringify(req.body || {}, null, 2));
     res.json({ success: true });
   } catch (e) { res.status(e.status || 500).json({ error: e.message }); }
 });
@@ -267,8 +290,14 @@ app.post('/api/collections/:collection/items/:id/parts/:part/files', (req, res) 
 app.delete('/api/collections/:collection/items/:id/parts/:part/files/:filename', (req, res) => {
   try {
     const c = getCollection(req.params.collection);
-    partOf(c, req.params.part); // validates the part exists
-    const filePath = resolveWithin(itemDirOf(c, req.params.id), safeSeg(req.params.filename, 'filename'));
+    const part = partOf(c, req.params.part);
+    // Scope the delete to THIS part: never remove an object/data file through a file manager, and only
+    // a filename that belongs to the part's glob (so DELETE .../parts/images/files/product.json fails).
+    if (part.type === 'object') return res.status(400).json({ error: `Part "${part.name}" does not hold files` });
+    const filename = security.safeRelPath(req.params.filename);
+    if (!filename) throw badRequest('Invalid filename');
+    if (!part.regex.test(filename)) return res.status(400).json({ error: `File "${filename}" does not belong to part "${part.name}" (${part.match})` });
+    const filePath = resolveWithin(itemDirOf(c, req.params.id), ...filename.split('/'));
     if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
     fs.unlinkSync(filePath);
     res.json({ success: true });
@@ -289,7 +318,7 @@ app.listen(PORT, HOST, () => {
   console.log(`🔒 Bind: ${HOST}${LOCALHOST_ONLY ? ' (localhost only)' : ' (ALL interfaces — exposed to the network)'}`);
   console.log('========================================');
   if (!LOCALHOST_ONLY) console.log('⚠  localhost_only is off — this admin is reachable from the network. Ensure you trust it.');
-  else console.log('⚠  Unauthenticated — local development only.');
+  else console.log('⚠  Unauthenticated — local development only (Host-pinned + cross-origin writes refused).');
   console.log('Press Ctrl+C to stop');
   console.log('');
 });

@@ -37,10 +37,19 @@ function readJsonSafe(p) {
   try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (e) { return null; }
 }
 
-// Immediate file names in a dir (sorted); [] if the dir is absent.
-function listFiles(dir) {
+// File names in a dir, RECURSIVELY, as "/"-joined paths relative to it (sorted); [] if absent. Mirrors
+// the engine's listFilesRelative so admin part-matching agrees with the build (a `gallery/*.jpg` or
+// `**/*.png` part matches the same files in both). A plain `*.jpg` still matches only root files
+// (`[^/]*` never crosses "/"), so simple parts are unchanged.
+function listFiles(dir, rel = '') {
   if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir, { withFileTypes: true }).filter(e => e.isFile()).map(e => e.name).sort();
+  const out = [];
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const relPath = rel ? `${rel}/${e.name}` : e.name;
+    if (e.isDirectory()) out.push(...listFiles(path.join(dir, e.name), relPath));
+    else if (e.isFile()) out.push(relPath);
+  }
+  return out.sort();
 }
 
 // A collection's data_model as a normalized part list: [{ name, type, match, regex, required, schema }].
@@ -59,6 +68,13 @@ function modelParts(collection) {
 // Files in an item folder matching a part's glob.
 function partFiles(itemDir, part) {
   return listFiles(itemDir).filter(f => part.regex.test(f));
+}
+
+// The first non-`object` part whose glob matches `filename` (a servable/deletable file part), or null.
+// Scopes the file GET/DELETE routes to actual paths/file_path parts, so an image route can't reach the
+// `object` part's data file (e.g. product.json).
+function filePart(parts, filename) {
+  return parts.find(p => p.type !== 'object' && p.regex.test(filename)) || null;
 }
 
 // The filename to write an object part to: the existing match if any, else the `match` when it is a
@@ -84,4 +100,4 @@ function readItemParts(itemDir, parts) {
   return out;
 }
 
-module.exports = { globToRegExp, readJsonSafe, listFiles, modelParts, partFiles, objectFileName, readItemParts };
+module.exports = { globToRegExp, readJsonSafe, listFiles, modelParts, partFiles, filePart, objectFileName, readItemParts };
