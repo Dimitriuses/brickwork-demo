@@ -15,7 +15,7 @@ function build(vars, loadComponent, replaceVariables, { raw, escapeHtml }) {
   const headerVars = {
     ...vars,
     // Fall back to the bundled logo if none is configured.
-    SITE_LOGO: vars.SITE_LOGO || 'assets/images/logo.jpg',
+    SITE_LOGO: vars.SITE_LOGO || 'assets/images/logo.png',
     NAV_ITEMS: raw(navHtml)
   };
 

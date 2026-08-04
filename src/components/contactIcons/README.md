@@ -96,21 +96,21 @@ The component can be used inside other components:
 The component generates Bootstrap Icon links:
 
 ```html
-<div class="social-links d-flex justify-content-center gap-4">
-  <a href="https://t.me/yourusername" target="_blank" aria-label="Telegram">
+<div class="social-links d-flex justify-content-left gap-4">
+  <a href="https://t.me/yourusername" target="_blank" rel="noopener" aria-label="Telegram">
     <i class="bi bi-telegram"></i>
   </a>
-  <a href="https://wa.me/1234567890" target="_blank" aria-label="WhatsApp">
+  <a href="https://wa.me/1234567890" target="_blank" rel="noopener" aria-label="WhatsApp">
     <i class="bi bi-whatsapp"></i>
   </a>
-  <a href="https://instagram.com/yourusername" target="_blank" aria-label="Instagram">
+  <a href="https://instagram.com/yourusername" target="_blank" rel="noopener" aria-label="Instagram">
     <i class="bi bi-instagram"></i>
   </a>
-  <a href="https://signal.me/#p/+1234567890" target="_blank" aria-label="Signal">
+  <a href="https://signal.me/#p/+1234567890" target="_blank" rel="noopener" aria-label="Signal">
     <i class="bi bi-signal"></i>
   </a>
-  <a href="viber://chat?number=1234567890" target="_blank" aria-label="Viber">
-    <img class="bi" style="filter: ..." src="assets/images/viber-brands-solid-full.svg" alt="Viber" width="21" height="21">
+  <a href="viber://chat?number=1234567890" target="_blank" rel="noopener" aria-label="Viber">
+    <svg class="bi" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="..."/></svg>
   </a>
 </div>
 ```
@@ -263,12 +263,12 @@ Only platforms with configured URLs will appear. Empty or missing links are skip
 ```
 components/contactIcons/
 ├── contactIcons.html         ← Template
-├── contactIcons.build.js     ← Reads config, generates icons
+├── contactIcons.build.js     ← Reads config, generates icons (Viber glyph inlined here)
 └── style.css                 ← Styles
-
-assets/images/
-└── viber-brands-solid-full.svg  ← Custom Viber icon
 ```
+
+No image files: every glyph is either a Bootstrap Icons font class or, for Viber,
+an inline SVG in the build script. The component deploys without carrying assets.
 
 ## How It Works
 
@@ -297,12 +297,20 @@ assets/images/
 The component uses Bootstrap Icons. Make sure your layout includes:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 ```
+
+`_layout.html` already includes this.
 
 ## Viber Custom Icon
 
-Viber uses a custom SVG because Bootstrap Icons doesn't include it. The SVG is styled to match other icons with CSS filters.
+Bootstrap Icons has no Viber glyph, so `contactIcons.build.js` inlines an SVG —
+a copy of the Bootstrap Icons "telephone" path (MIT). It carries
+`fill="currentColor"` and `width/height: 1em`, so it picks up the same colour and
+size as its neighbours from `.social-links a` with no extra styling.
+
+Inlining keeps the component self-contained: a site adopting it needs no
+`assets/images/` file alongside.
 
 ## Troubleshooting
 
@@ -325,11 +333,10 @@ Viber uses a custom SVG because Bootstrap Icons doesn't include it. The SVG is s
 
 ### Viber icon wrong size?
 
-**Solution:** Adjust in config or CSS:
+The inline SVG is sized in `em`, so it follows the link's font-size:
 ```css
-.social-links img.bi {
-  width: 24px !important;
-  height: 24px !important;
+.social-links a {
+  font-size: 1.5rem;
 }
 ```
 

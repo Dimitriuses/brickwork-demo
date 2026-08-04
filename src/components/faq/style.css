@@ -7,6 +7,9 @@
   color: var(--bw-accent, #667eea);
   flex-shrink: 0;
   transition: transform 0.3s ease;
+  /* Bootstrap Icons size off font-size; keeps the glyph at the 24px the old <img> declared. */
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
 .accordion-button {

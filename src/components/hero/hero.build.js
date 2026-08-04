@@ -13,7 +13,7 @@ function build(vars, loadComponent, replaceVariables) {
   const heroVars = {
     HERO_TITLE: vars.HERO_TITLE || 'Welcome',
     HERO_SUBTITLE: vars.HERO_SUBTITLE || 'Your subtitle here',
-    HERO_BG_IMAGE: vars.HERO_BG_IMAGE || 'assets/images/hero.png',
+    HERO_BG_IMAGE: vars.HERO_BG_IMAGE || 'assets/images/hero.jpg',
     HERO_HEIGHT: vars.HERO_HEIGHT || '100vh',
     HERO_OVERLAY: vars.HERO_OVERLAY !== undefined ? vars.HERO_OVERLAY : '0.45'
   };
