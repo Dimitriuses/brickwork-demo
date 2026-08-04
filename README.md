@@ -59,6 +59,26 @@ git -C engine checkout <commit-or-tag>
 git add engine && git commit -m "bump engine"
 ```
 
+## Image assets
+
+Every image in this repo is generated, so the MIT license covers it cleanly:
+
+- `shared/assets/images/hero.jpg` and `logo.png` are emitted by
+  `tools/generate-brand-assets.py` (`pip install pillow numpy`, then
+  `python tools/generate-brand-assets.py`). It is a dev-time tool — the images are
+  committed, and `npm run build` does not run it.
+- `shared/products/*/shape-*.png` are placeholder product shots.
+
+Third-party assets are loaded from a CDN rather than vendored: Bootstrap and
+Bootstrap Icons (both MIT) and the Cinzel / Montserrat webfonts (SIL OFL 1.1).
+The one exception is the Viber glyph inlined in
+`components/contactIcons/contactIcons.build.js`, a copy of the Bootstrap Icons
+"telephone" path.
+
+If you swap in a photo, record its source and license here — don't leave an
+unattributed stock image in the tree, since MIT would then be sublicensing
+artwork this repo has no right to sublicense.
+
 ## Deploy
 
 The static output is in `build/`. Point any static host (Netlify, GitHub Pages, …)
